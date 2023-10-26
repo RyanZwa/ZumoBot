@@ -1,0 +1,64 @@
+// Include necessary libraries
+#include <Wire.h>
+#include <Zumo32U4.h>
+
+// Define constants
+const uint16_t lineSensorValueRzwa = 500;
+const uint16_t straightSpeedRzwa = 200;
+const uint16_t reverseSpeedRzwa = 400;
+
+
+// Initialize sensors and motors
+Zumo32U4LineSensors lineSensors;
+Zumo32U4Motors motors;
+Zumo32U4ProximitySensors proxSensors;
+Zumo32U4Buzzer buzzer;
+
+// Define number of sensors and their values
+#define NUM_SENSORS 3
+uint16_t lineSensorValues[NUM_SENSORS];
+
+// Define battlesong
+const char battlesong[] PROGMEM =
+  "C6e C6e C6e B5 G5 A5 G5 E5 ";
+
+void setup() {
+  Serial.begin(115200);
+  lineSensors.initThreeSensors();
+  randomSeed(analogRead(0));
+  battlesound();
+}
+
+void loop() {
+  lineSensors.read(lineSensorValues);
+
+  if (lineSensorValues[0] < lineSensorValueRzwa || lineSensorValues[1] < lineSensorValueRzwa || lineSensorValues[2] < lineSensorValueRzwa) 
+  {
+    Serial.println("WIT : ");
+    turnAround();
+  } else {
+    Serial.println("ZWART : ");
+    motors.setSpeeds(straightSpeedRzwa, straightSpeedRzwa);
+  }
+}
+
+void turnAround() {
+  int randomDirection = random(2);
+  motors.setSpeeds(-reverseSpeedRzwa, -reverseSpeedRzwa);
+  delay(200);
+
+  if (randomDirection == 0) {
+    motors.setSpeeds(reverseSpeedRzwa, -reverseSpeedRzwa);
+  } else {
+    motors.setSpeeds(-reverseSpeedRzwa, reverseSpeedRzwa);
+  }
+  delay(200);
+}
+
+void battlesound() {
+  buzzer.playFromProgramSpace(battlesong);
+  while (buzzer.isPlaying()) {
+    // Wait for the song to finish playing
+  }
+}
+
