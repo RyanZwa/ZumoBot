@@ -123,7 +123,7 @@ void loop() {
   objectSeen = (leftValue >= sensorThreshold) || (rightValue >= sensorThreshold);
 
   turnSpeed = accDeceleration(objectSeen);
-//If the objectSeen is 0, the robot will go max speed which will either make it smash into the enemy or go to a line.
+//If the leftValue and rightValue is 0, the robot will go max speed which will either make it smash into the enemy or go to a line.
   if (leftValue == 0 && rightValue == 0) {
     motors.setSpeeds(maxSpeed, maxSpeed);
   }
